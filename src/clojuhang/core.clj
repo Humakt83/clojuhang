@@ -9,14 +9,22 @@
 
 (defn start []
   (def word (pickRandomWord))
+  (def guessedLetters (atom ()))
   (loop [n 0]
     (when (< n 6)
+      (println "Guessed letters:" (str @guessedLetters))
       (println "Guess a letter")
-      (let [guessedLetter (read-line)]
+      (let [guessedLetter (.toString (first (read-line)))]
         (if (.contains word guessedLetter)
           (println "Correct")
-          (println "Wrong")))
-      (recur (inc n))))
+          (println "Wrong"))
+        (swap! guessedLetters conj guessedLetter))
+      (defn doesNotContain 
+        [x]
+        (not (.contains (str @guessedLetters) (str x))))
+      (if (<= (count (filter doesNotContain (seq word))) 0)
+        (println "Victory!")
+        (recur (inc n)))))
   (println "Word was:" (.toUpperCase word)))
 
 (start)
