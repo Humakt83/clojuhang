@@ -1,6 +1,12 @@
 (ns clojuhang.core)
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn readWords []
+  (vec (.split (slurp "resources/words.txt") " ")))
+
+(defn pickRandomWord []
+  (def words (readWords))  
+  (get words (rand-int (.length words))))
+
+(defn start []
+  (pickRandomWord))
+(start)
