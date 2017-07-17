@@ -6,6 +6,7 @@
 
 (def white (ui/color :red 0.85 :blue 0.75 :green 0.85))
 (def blue (ui/color :red 0 :blue 1 :green 0))
+(def font (ui/font :family "Times New Roman" :weight :normal :size 20))
 
 (defn material-for-state [hanged-state body-part]
   (ui/phong-material
@@ -63,25 +64,16 @@
                                     :rotate 130)
                        (ui/text
                          :text (game/show-word word guessed-letters)
-                         :font (ui/fonte
-                                 :family "Times New Roman"
-                                 :weight :normal
-                                 :size 20)
-                         :translate-x 250 :translate-y 200 :translate-z 600)
+                         :font font
+                         :translate-x 250 :translate-y 100 :translate-z 600)
                        (ui/text
                          :text (game/progress-text word hanged-state guessed-letters)
-                         :font (ui/font
-                                 :family "Times New Roman"
-                                 :weight :normal
-                                 :size 20)
+                         :font font
                          :translate-x 35 :translate-y -180 :translate-z 600)
                        (ui/button
                          :text "NEW GAME"
-                         :font (ui/font
-                                 :family "Times New Roman"
-                                 :weight :normal
-                                 :size 26)
-                         :translate-x 220 :translate-y 260 :translate-z 600
+                         :font font
+                         :translate-x 220 :translate-y 140 :translate-z 600
                          :on-action {:event :new-game})
                        
                        (ui/point-light :translate-x 350 :translate-y 100 :translate-z 300)])))
@@ -93,7 +85,7 @@
             :shown true
             :scene (ui/scene
                      :width 400
-                     :height 400
+                     :height 300
                      :depth-buffer true
                      :on-key-released {:event :key
                                        :fn-fx/include {:fn-fx/event #{:code}}}
