@@ -1,20 +1,40 @@
-(ns clojuhang.core)
+(ns clojuhang.game
+  (:require [clojure.string :as string]))
 
-(defn readWords []
+(defn read-words []
   (vec (.split (slurp "resources/words.txt") " ")))
 
-(defn pickRandomWord []
-  (def words (readWords))  
-  (get words (rand-int (.length words))))
+(defn pick-random-word []
+  (let [words (read-words)]
+  (.toUpperCase (get words (rand-int (.length words))))))
+
+(defn show-word [word guessed-letters]
+	(string/join " " (map (fn[x] (if (.contains guessed-letters (str x)) 
+	                             (str x) 
+	                             "_"))
+	                     word)))
+
+(defn letter-is-part-of-word [word guessed-letter]
+  (.contains word guessed-letter))
+
+(defn word-is-solved [word guessed-letters]
+  (not (.contains (show-word word guessed-letters) "_")))
+
+(defn progress-text [word hanged-state guessed-letters]
+  (cond
+    (>= hanged-state 6) "Game over"
+    (word-is-solved word guessed-letters) "Victory"
+    :else (format "%d guesses left" (- 6 hanged-state))
+  ))
 
 (defn start []
-  (def word (pickRandomWord))
-  (def guessedLetters (atom ()))
+  (let [word (pick-random-word)
+        guessedLetters (atom ())]
   (loop [n 0]
     (when (< n 6)
       (println "Guessed letters:" (str @guessedLetters))
       (println "Guess a letter")
-      (let [guessedLetter (.toString (first (read-line)))]
+      (let [guessedLetter (str (first (read-line)))]
         (if (.contains word guessedLetter)
           (println "Correct")
           (println "Wrong"))
@@ -25,6 +45,6 @@
       (if (<= (count (filter doesNotContain (seq word))) 0)
         (println "Victory!")
         (recur (inc n)))))
-  (println "Word was:" (.toUpperCase word)))
+  (println "Word was:" (.toUpperCase word))))
 
-(start)
+(show-word "word" ["w" "r"])
