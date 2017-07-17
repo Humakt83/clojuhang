@@ -1,5 +1,7 @@
 # clojuhang
 
+![Image of the game](https://github.com/Humakt83/clojuhang/blob/master/Hangman.png)
+
 Clojure hangman game.
 
 ## Usage
