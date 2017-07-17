@@ -4,20 +4,20 @@
             [fn-fx.controls :as ui]
             [clojuhang.game :as game]))
 
-(def red (ui/color :red 1 :blue 0 :green 0))
+(def white (ui/color :red 0.85 :blue 0.75 :green 0.85))
 (def blue (ui/color :red 0 :blue 1 :green 0))
 
 (defn material-for-state [hanged-state body-part]
   (ui/phong-material
     :diffuse-color (if (>= hanged-state body-part)
                      blue
-                     red)))
+                     white)))
 
 (defmulti handle-event (fn [state {:keys [event]}]
                          event))
 
 (defmethod handle-event :key
-  [{:keys [key] :as state} {:keys [fn-fx/includes]}]
+  [state {:keys [fn-fx/includes]}]
   (if (and (< (get state :hanged-state)) (not (game/word-is-solved (get state :word) (get state :guessed-letters))))
 	  (let [{:keys [code]} (:fn-fx/event includes)]
 	    (if (game/letter-is-part-of-word (get state :word) (.getName code))
@@ -25,6 +25,16 @@
 	      (update-in state [:hanged-state] + 1))
 	        )
    state))
+
+(defmethod handle-event :new-game
+  [state event]
+  (let [new-word (game/pick-random-word)]
+    (-> state      
+      (assoc-in [:hanged-state] 0)
+      (assoc-in [:guessed-letters] [])
+      (assoc-in [:word] new-word))
+    )
+  )
 
 (defui MainWindow
   (render [this {:keys [hanged-state word guessed-letters]}]
@@ -53,18 +63,27 @@
                                     :rotate 130)
                        (ui/text
                          :text (game/show-word word guessed-letters)
-                         :font (ui/font
+                         :font (ui/fonte
                                  :family "Times New Roman"
                                  :weight :normal
                                  :size 20)
-                         :translate-x 265 :translate-y 200 :translate-z 600)
+                         :translate-x 250 :translate-y 200 :translate-z 600)
                        (ui/text
                          :text (game/progress-text word hanged-state guessed-letters)
                          :font (ui/font
                                  :family "Times New Roman"
                                  :weight :normal
-                                 :size 24)
-                         :translate-x 265 :translate-y 240 :translate-z 600)
+                                 :size 20)
+                         :translate-x 35 :translate-y -180 :translate-z 600)
+                       (ui/button
+                         :text "NEW GAME"
+                         :font (ui/font
+                                 :family "Times New Roman"
+                                 :weight :normal
+                                 :size 26)
+                         :translate-x 220 :translate-y 260 :translate-z 600
+                         :on-action {:event :new-game})
+                       
                        (ui/point-light :translate-x 350 :translate-y 100 :translate-z 300)])))
 
 (defui Stage

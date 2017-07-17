@@ -22,29 +22,7 @@
 
 (defn progress-text [word hanged-state guessed-letters]
   (cond
-    (>= hanged-state 6) "Game over"
+    (>= hanged-state 6) (format "Game over. Correct word was: %s" word)
     (word-is-solved word guessed-letters) "Victory"
     :else (format "%d guesses left" (- 6 hanged-state))
   ))
-
-(defn start []
-  (let [word (pick-random-word)
-        guessedLetters (atom ())]
-  (loop [n 0]
-    (when (< n 6)
-      (println "Guessed letters:" (str @guessedLetters))
-      (println "Guess a letter")
-      (let [guessedLetter (str (first (read-line)))]
-        (if (.contains word guessedLetter)
-          (println "Correct")
-          (println "Wrong"))
-        (swap! guessedLetters conj guessedLetter))
-      (defn doesNotContain 
-        [x]
-        (not (.contains (str @guessedLetters) (str x))))
-      (if (<= (count (filter doesNotContain (seq word))) 0)
-        (println "Victory!")
-        (recur (inc n)))))
-  (println "Word was:" (.toUpperCase word))))
-
-(show-word "word" ["w" "r"])
